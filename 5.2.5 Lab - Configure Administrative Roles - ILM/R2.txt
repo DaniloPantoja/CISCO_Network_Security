@@ -1,0 +1,32 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R2
+
+
+enable
+configure terminal
+
+!Atribuindo nome ao dispositivo
+	hostname R2
+
+!Configurando Interfaces
+	interface g0/0/0
+	 ip address 10.1.1.2 255.255.255.252
+	 no shutdown
+	 exit
+
+	interface g0/0/1
+	 ip address 10.2.2.2 255.255.255.252
+	 no shutdown
+	 exit
+
+!Desative a pesquisa de DNS no R1
+	no ip domain-lookup
+
+!Roteamento OSPF no R2
+
+	router ospf 1
+	 network 10.1.1.0 0.0.0.3 area 0
+	 network 10.2.2.0 0.0.0.3 area 0
+	 end

@@ -1,0 +1,39 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R3
+
+
+enable
+configure terminal
+
+!Atribuindo nome ao dispositivo
+	hostname R3
+
+!Configurando Interfaces
+	interface g0/0/0
+	 ip address 10.2.2.1 255.255.255.252
+	 no shutdown
+	 exit
+
+	interface g0/0/1
+	 ip address 192.168.3.1 255.255.255.0
+	 no shutdown
+	 exit
+
+!Desative a pesquisa de DNS no R1
+	no ip domain-lookup
+
+!Roteamento OSPF no R3
+
+	router ospf 1
+	 network 10.2.2.0 0.0.0.3 area 0
+	 network 192.168.3.0 0.0.0.255 area 0
+	 passive-interface g0/0/1
+	 exit
+
+!Permitir AAA no R1
+	aaa new-model
+
+!Senha modo EXEC Privilegiado
+	enable secret cisco12345

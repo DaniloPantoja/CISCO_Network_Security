@@ -1,0 +1,31 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R3 - Criar Views
+!Depois de entrar na View Root com a senha cisco12345
+
+
+configure terminal
+
+!Criar view admin1
+	parser view admin1
+	 secret admin1pass
+	 commands exec include all show
+	 commands exec include all config terminal
+	 commands exec include all debug
+	 exit
+
+!Criar parser view admin2
+	parser view admin2
+	 secret admin2pass
+	 commands exec include all show
+	 exit
+
+!Criar parser view tech
+	parser view tech
+	 secret techpass
+	 commands exec include show version
+	 commands exec include show interfaces
+	 commands exec include show ip interface brief
+	 commands exec include show parser view
+	 end
