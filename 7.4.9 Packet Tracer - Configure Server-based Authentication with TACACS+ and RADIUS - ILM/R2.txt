@@ -1,0 +1,13 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R2
+
+conf terminal
+username Admin2 secret admin2pa55 
+tacacs-server host 192.168.2.2 
+tacacs-server key tacacspa55
+aaa new-model
+aaa authentication login default group tacacs+ local 
+line console 0
+ login authentication default

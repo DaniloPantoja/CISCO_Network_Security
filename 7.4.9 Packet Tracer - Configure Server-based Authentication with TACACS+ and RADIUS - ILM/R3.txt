@@ -1,0 +1,13 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R3
+
+conf terminal
+username Admin3 secret admin3pa55 
+radius-server host 192.168.3.2 
+radius-server key radiuspa55 
+aaa new-model
+aaa authentication login default group radius local 
+line console 0
+login authentication default 

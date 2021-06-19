@@ -1,0 +1,25 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R3
+
+username Admin1 secret admin1pa55
+
+aaa new-model
+aaa authentication login default local
+
+line console 0
+
+login authentication default 
+
+exit
+
+ip domain-name netsec.com
+crypto key generate rsa general-keys modulus 1024
+
+aaa authentication login SSH-LOGIN local
+
+
+line vty 0 4
+login authentication SSH-LOGIN
+transport input ssh
