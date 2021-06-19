@@ -1,0 +1,16 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R1
+
+
+!Atualizar horario
+	clock set 11:47:00 June 19 2021
+
+	config terminal
+
+!Habilita log de data e hora
+	service timestamps log datetime msec
+
+!Enviar os eventos de log para o servidor Syslog
+	logging 10.0.1.254

@@ -1,0 +1,37 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R1
+
+
+configure terminal
+
+!Inserir dominio
+	ip domain-name netsec.com
+
+!Criar Usuario
+	username admin secret admin12345
+
+!Configurar VTY	 
+	line vty 0 4
+	 transport input ssh
+	 login local
+	 exec-time 5 0
+	 exit
+
+!Bloqueia login	
+	login block-for 600 attempts 4 within 120
+
+!Gerar chave rsa	
+	crypto key generate rsa general-keys modulus 1024
+
+!Conectar ao NTP server	
+	ntp server 64.103.224.2
+
+!Habilita log de data e hora
+	service timestamps log datetime msec
+
+!Enviar os eventos de log para o servidor Syslog
+	logging 10.0.1.254
+	!
+
