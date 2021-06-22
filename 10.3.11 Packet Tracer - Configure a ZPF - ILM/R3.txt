@@ -1,0 +1,43 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Configuracoes do R3
+
+
+config terminal
+
+!Criando as zonas de entrada e saida
+	zone security IN-ZONE
+	
+	zone security OUT-ZONE
+	
+
+!Criando uma ACL extendida
+	access-list 101 permit ip 192.168.3.0 0.0.0.255 any
+
+!Criar class e referencias a ACL extendida criada
+	class-map type inspect match-all IN-NET-CLASS-MAP
+	 match access-group 101
+	 
+
+!Criar uma politica que determina o que fazer o trafego combinado
+	policy-map type inspect IN-2-OUT-PMAP
+	 class type inspect IN-NET-CLASS-MAP
+	  inspect
+	  
+	   
+
+!Criar o par de zona para aplicar as politicas do firewall
+	zone-pair security IN-2-OUT-ZPAIR source IN-ZONE destination OUT-ZONE
+
+!Associando politica aos pares de zonas criados
+	 service-policy type inspect IN-2-OUT-PMAP
+	 
+
+!Aplicando as interfaces
+	interface GigabitEthernet0/1
+	 zone-member security IN-ZONE
+	 
+	interface Serial0/0/1
+	 zone-member security OUT-ZONE
+	end
