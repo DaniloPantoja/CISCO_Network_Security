@@ -1,0 +1,20 @@
+!Inserir interface de gerenciamento
+    interface vlan 1
+     ip addr 192.168.3.254
+     no shut
+
+!Inserir gateway
+    ip default-gateway 192.168.3.1
+
+!Habilitar AAA e conectar ao servidor
+    aaa new-model
+    aaa authentication dot1x default group radius
+    radius-server host 192.168.1.3 key cisco
+
+    dot1x system-auth-control
+
+!Inserindo a autenticação por 802.1x na interface e permitindo usuarios do servidor
+interface f0/18
+     switchport mode access
+      authentication port-control auto
+      dot1x pae authenticator
