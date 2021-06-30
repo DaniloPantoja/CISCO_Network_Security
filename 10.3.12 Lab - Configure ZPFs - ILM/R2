@@ -1,0 +1,20 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Adaptado do lab 10.3.12
+!Configuracoes do R2
+
+hostname R2
+
+interface g0/0/0
+ ip address 10.1.1.2 255.255.255.252
+ no shutdown
+
+interface s0/1/0
+ ip address 10.2.2.2 255.255.255.252
+ no shutdown
+
+!Rota estatica
+ip route 192.168.1.0 255.255.255.0 10.1.1.1
+ip route 192.168.3.0 255.255.255.0 10.2.2.1 
+ip route 192.168.33.0 255.255.255.0 10.2.2.1

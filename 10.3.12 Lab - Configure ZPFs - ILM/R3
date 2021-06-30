@@ -1,0 +1,65 @@
+!Autor: Danilo Pantoja
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.0.0
+!Adaptado do lab 10.3.12
+!Configuracoes do R3
+
+hostname R3
+
+interface s0/1/0
+ ip address 10.2.2.1 255.255.255.252
+ no shutdown
+
+interface g0/0/1
+ ip address 192.168.3.1 255.255.255.0
+ no shutdown
+ 
+interface g0/0/0
+ ip address 192.168.33.1 255.255.255.0
+ no shutdown
+
+!Rota estatica
+ip route 0.0.0.0 0.0.0.0 10.2.2.2
+
+!Criando as zonas
+zone security INSIDE
+zone security CONFROOM
+zone security INTERNET
+
+!Criando as classes
+class-map type inspect match-any INSIDE_PROTOCOLS
+ match protocol tcp
+ match protocol udp
+ match protocol icmp
+
+class-map type inspect match-any CONFROOM_PROTOCOLS
+ match protocol http
+ match protocol https
+ match protocol dns
+
+!Criando as politicas
+policy-map type inspect INSIDE_TO_INTERNET
+ class type inspect INSIDE_PROTOCOLS
+  inspect
+
+policy-map type inspect CONFROOM_TO_INTERNET
+ class type inspect CONFROOM_PROTOCOLS
+  inspect
+
+!Criando o Par de zonas
+zone-pair security INSIDE_TO_INTERNET source INSIDE destination INTERNET
+ service-policy type inspect INSIDE_TO_INTERNET
+
+zone-pair security CONFROOM_TO_INTERNET source CONFROOM destination INTERNET
+ service-policy type inspect CONFROOM_TO_INTERNET
+
+
+!Adicionando as interfaces como membros da zona
+interface s0/1/0
+ zone-member security INTERNET
+
+interface g0/0/1
+ zone-member security INSIDE 
+
+ interface g0/0/0
+ zone-member security CONFROOM
