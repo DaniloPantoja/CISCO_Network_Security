@@ -1,0 +1,30 @@
+
+configure terminal
+
+ license boot module c1900 technology-package securityk9
+ write
+ reload
+
+ access-list 110 permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
+
+!Configure IKE Phase 1 ISAKMP policy no R1
+	crypto isakmp policy 10
+	  encryption aes 256
+	  authentication pre-share
+	  group 5
+
+ 	crypto isakmp key vpnpa55 address 10.2.2.2
+
+!Configurar a política do IPsec da fase 2 IKE no R1.
+
+	crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+	
+	crypto map VPN-MAP 10 ipsec-isakmp
+	 description VPN connection to R3
+	 set peer 10.2.2.2
+	 set transform-set VPN-SET
+	 match address 110
+
+!Configurar o mapa de criptografia na interface de saída.
+	interface s0/0/0
+	 crypto map VPN-MAP

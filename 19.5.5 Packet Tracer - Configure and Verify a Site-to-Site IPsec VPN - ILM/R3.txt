@@ -1,0 +1,31 @@
+
+
+
+configure terminal
+
+ license boot module c1900 technology-package securityk9
+ write
+ reload
+
+!Configurar o roteador R3   para apoiar uma VPN de site a site com R1
+	access-list 110 permit ip 192.168.3.0 0.0.0.255 192.168.1.0 0.0.0.255
+
+!Configurar as propriedades ISAKMP da fase 1 IKE no R3
+	crypto isakmp policy 10
+	 encryption aes 256
+	 authentication pre-share
+	 group 5 
+	crypto isakmp key vpnpa55 address 10.1.1.2
+
+!Configurar a política do IPsec da fase 2 IKE no R3
+	crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+	crypto map VPN-MAP 10 ipsec-isakmp
+	 description VPN connection to R1
+     set peer 10.1.1.2
+	 set transform-set VPN-SET
+	 match address 110
+
+!Configurar o mapa de criptografia na interface de saída
+	interface s0/0/1
+	 crypto map VPN-MAP
+

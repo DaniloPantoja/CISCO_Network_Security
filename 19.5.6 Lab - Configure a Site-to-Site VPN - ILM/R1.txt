@@ -1,0 +1,26 @@
+crypto isakmp enable
+
+crypto isakmp policy 10
+ hash sha
+ authentication pre-share
+ group 5
+ lifetime 3600
+ encryption aes 256
+
+crypto isakmp key cisco123 address 10.2.2.1
+
+crypto ipsec transform-set R1-R3 esp-aes 256 esp-sha-hmac
+crypto ipsec security-association lifetime seconds 1800
+
+access-list 101 permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
+
+crypto map CMAP 10 ipsec-isakmp
+ match address 101
+ set peer 10.2.2.1
+ set pfs group5
+ set transform-set R1-R3
+ set security-association lifetime seconds 900
+
+ interface GigabitEthernet0/0/0
+  crypto map CMAP
+
