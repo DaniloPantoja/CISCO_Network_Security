@@ -1,0 +1,23 @@
+
+configure terminal
+hostname R1
+security passwords min-length 10
+enable secret cisco12345
+ip domain-name netsec.com
+username admin01 secret cisco12345
+interface GigabitEthernet0/0/0
+ ip address 172.16.3.1 255.255.255.0
+ no shutdown
+interface GigabitEthernet0/0/1
+ ip address 209.165.200.225 255.255.255.248
+ no shutdown
+crypto key generate rsa general-keys modulus 1024
+line con 0
+ exec-timeout 5 0
+ logging synchronous
+ login local
+line vty 0 4
+ exec-timeout 5 0
+ login local
+ transport input ssh
+end
