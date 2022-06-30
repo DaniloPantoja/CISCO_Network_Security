@@ -1,0 +1,91 @@
+!Autor: Victor Nooblath
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.1.1
+!Configuracoes do R1
+
+enable
+configure terminal
+
+!Atribuindo nome ao dispositivo
+	hostname R1
+
+!Configurando Interfaces
+	interface g0/0/0
+		ip address 10.1.1.1 255.255.255.252
+		no shutdown
+		exit
+
+	interface g0/0/1
+		ip address 192.168.1.1 255.255.255.0
+		no shutdown
+		exit
+
+!Desative a pesquisa de DNS no R1
+	no ip domain-lookup
+
+!Configurar uma rota padrao estatica do R1 ao R2
+    ip route 0.0.0.0 0.0.0.0 10.1.1.2
+
+!Configure um comprimento minimo de senha. (10)
+    security passwords min-length 10
+
+!Configure uma senha para o modo EXEC privilegiado.
+    enable secret cisco12345
+
+!Configure uma senha de console e habilite o login. Para segurança adicional, o comando exec-timeout faz com que a linha seja desconectada após 5 minutos de inatividade. O comando logging synchronous impede que as mensagens do console interrompam a entrada do comando.
+    line console 0
+        password ciscoconpass
+        exec-timeout 5 0
+        login
+        logging synchronous
+        exit
+
+!Configurar uma senha para a porta auxiliar
+    line aux 0
+        password ciscoauxpass
+        exec-timeout 5 0
+        login
+		exit
+
+!Configure a senha nas linhas vty
+	line vty 0 4
+		password ciscovtypass
+		exec-timeout 5 0
+		login
+		exit
+
+!Criptografe as senhas do console, aux e vty
+	service password-encryption
+
+!Configurar um banner de aviso de login
+	banner login #Unauthorized access strictly prohibited!#
+
+!Salve a configuração em execução na configuração de inicialização a partir do prompt EXEC privilegiado.
+	save running-config startup-config
+
+!Crie uma conta de usuário local
+	username user01 secret user01pass
+
+!Defina a linha do console para usar os nomes de usuário e senhas de login definidos localmente
+	line console 0
+		login local
+		exit
+
+!Configurar o nome de dominio e gerar as chaves rsa
+	ip domain-name netsec.com
+	crypto key generate rsa general-keys modulus 1024
+
+!Ativar SSH nas linhas vty e Alterar o metodo de login para usar o banco de dados local para a verificacao de usuario
+	line vty 0 4
+		transport input ssh
+		login local
+		exit
+
+!definindo a porta auxiliar para usar as contas de login definidas localmente.
+	line aux 0
+		login local
+		exit
+
+!Salve a configuração em execução na configuração de inicialização a partir do prompt EXEC privilegiado.
+	save running-config startup-config
+
