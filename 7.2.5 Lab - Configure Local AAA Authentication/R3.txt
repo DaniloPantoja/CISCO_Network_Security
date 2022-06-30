@@ -1,0 +1,108 @@
+!Autor: Victor Nooblath
+!Curso Network Security
+!Utilize o Cisco Packet Tracer 8.1.1
+!Configuracoes do R3
+
+enable
+configure terminal
+
+!Atribuindo nome ao dispositivo
+	hostname R3
+
+!Configurando Interfaces
+	interface g0/0/0
+		ip address 10.2.2.1 255.255.255.252
+		no shutdown
+		exit
+
+	interface g0/0/1
+		ip address 192.168.3.1 255.255.255.0
+		no shutdown
+		exit
+
+!Desative a pesquisa de DNS no R3
+	no ip domain-lookup
+
+!Configurar uma rota padrao estatica do R3 ao R2
+    ip route 0.0.0.0 0.0.0.0 10.2.2.2
+
+!Configure um comprimento minimo de senha. (10)
+    security passwords min-length 10
+
+!Configure uma senha para o modo EXEC privilegiado.
+    enable secret cisco12345
+
+!Configure uma senha de console e habilite o login. Para segurança adicional, o comando exec-timeout faz com que a linha seja desconectada após 5 minutos de inatividade. O comando logging synchronous impede que as mensagens do console interrompam a entrada do comando.
+    line console 0
+        password ciscoconpass
+        exec-timeout 5 0
+        login
+        logging synchronous
+        exit
+
+!Configurar uma senha para a porta auxiliar
+    line aux 0
+        password ciscoauxpass
+        exec-timeout 5 0
+        login
+		exit
+
+!Configure a senha nas linhas vty
+	line vty 0 4
+        password ciscovtypass
+        exec-timeout 5 0
+        login
+        exit
+
+!Criptografe as senhas do console, aux e vty
+	service password-encryption
+
+!Configurar um banner de aviso de login
+	banner login #Unauthorized access strictly prohibited!#
+
+!Salve a configuração em execução na configuração de inicialização a partir do prompt EXEC privilegiado.
+	save running-config startup-config
+
+!Crie uma conta de usuário local
+	username user01 secret user01pass
+
+!Defina a linha do console para usar os nomes de usuário e senhas de login definidos localmente
+	line console 0
+		login local
+		exit
+
+!Configurar o nome de dominio e gerar as chaves rsa
+	ip domain-name netsec.com
+	crypto key generate rsa general-keys modulus 1024
+
+!Ativar SSH nas linhas vty e Alterar o metodo de login para usar o banco de dados local para a verificacao de usuario
+	line vty 0 4
+		transport input ssh
+		login local
+        exit
+
+!definindo a porta auxiliar para usar as contas de login definidas localmente.
+	line aux 0
+		login local
+        exit
+
+!Salve a configuração em execução na configuração de inicialização a partir do prompt EXEC privilegiado.
+	save running-config startup-config
+
+!Crie uma conta de usuario local de privilegio 15
+    username Admin01 privilege 15 secret Admin01pass
+
+!Criando serviços AAA
+    aaa new model
+
+!Criando uma lista de login padrão
+    aaa authentication login default local-case none
+
+!Crie uma lista de autenticação exclusiva para o acesso SSH ao roteador. Isso não tem o fallback de
+nenhuma autenticação, portanto, se não houver nomes de usuário no banco de dados local, o acesso
+SSH está desabilitado. Para criar um perfil de autenticação que não seja o padrão, especifique um nome
+de lista de SSH_LINES e aplique-o às linhas vty.
+    aaa authentication login SSH_LINES local
+    line vty 0 4
+        login authentication SSH_LINES
+        exit
